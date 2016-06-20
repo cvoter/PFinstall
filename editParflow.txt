@@ -46,9 +46,10 @@ pfsimulator/parflow_lib/solver_richards.c
 	InitVectorAll(instance_xtra -> can_out, 0.0);
 3. Around line 1178: Subvector & double for writing CLM output
 	Subvector    *eflx_lh_tot_sub,....
-4. Around line 1623: Subvectors for CLM fluxes
+	double       *eflx_lh,...
+4. Around line 1624: Subvectors for CLM fluxes
 	can_out_sub        = VectorSubvector(instance_xtra -> can_out,is);
-5. Around line 1683: Subvector data for CLM fluxes
+5. Around line 1684: Subvector data for CLM fluxes
 	can                = SubvectorData(can_out_sub);
 6. Around line 1793: CALL_CLM_LSM(pp...clm_daily_restart)
 
