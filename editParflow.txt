@@ -1,0 +1,69 @@
+# editParflow.txt
+# Carolyn Voter
+# 2016.06.20
+
+This file describes how to edit parflow scripts to:
+A) Print canopy storage
+B) Suppress writing uneeded output files
+
+Current file line numbers based on v895
+
+=============================================
+A) TO PRINT CANOPY (H2OCAN)
+=============================================
+clm%h2ocan --> "can", "can_out", etc.
+Can generally search for "clm%h2osno", "swe", "swe_out" and follow name conventions for that flux
+
+pfsimulator/clm/clm.F90
+1. Add "can_pf" to subroutine clm_lsm(pressure,saturation,...clm_daily_rst)
+2. Around line 96: declare local variable
+	real(r8) :: can_pf((nx+2)*(ny+2)*3)            ! can
+3. Around line 568: set local variable equal to clm variable
+	can_pf(l)          = clm(t)%h2ocan
+4. Around line 582: do this again in the else part of the statement
+	can_pf(l)          = -9999.0
+
+pfsimulator/clm/open_file.F90
+1. Around line 73: add output directory for h2ocan
+     open(2010,file=clm_output_dir//'can_out.'//cistep//'.bin.'//trim(adjustl(RI)), access=ACCESS, form=FORM) ! @ 2D output file
+     write(2010) ix,iy,iz,drv%nc,drv%nr,nz
+2. Around line 127: add output directory for h2ocan
+     open(2010,file=clm_output_dir//'can_out/can_out.'//cistep//'.bin.'//trim(adjustl(RI)), access=ACCESS, form=FORM) ! @ 2D output file
+     write(2010) ix,iy,iz,drv%nc,drv%nr,nz
+
+pfsimulator/parflow_lib/parflow_proto_f.h
+1. Around line 99: correct sequence for CLM_LSM(pressure....clm_daily_rst)
+add "can_out_data" wherever see "swe_out_data" (should be 3x)
+
+pfsimulator/parflow_lib/solver_richards.c
+1. Around line 229: declare local vars for pf printing of clm output
+2. Around line 662: initialize variables for printing CLM output
+3. Around line 1178: Subvector & double for writing CLM output
+4. Around line 1623: Subvectors for CLM fluxes
+5. Around line 1683: Subvector data for CLM fluxes
+6. Around line 1793: CALL_CLM_LSM(pp...clm_daily_restart)
+7. Around line 2518: Print CLM output files
+8. Around line 2570: Single file output (not 100% sure how no. of lines change)
+9. Around line 2638: Multifile output
+10. Around line 2947: FreeVector for CLM data
+
+pfsimulator/parflow_lib/write_parflow_silo.c
+1. Around line 243: add "can" to list of output types
+	"can_out",
+
+=============================================
+B) TO ELIMINATE EXCESS CLM OUTPUT
+=============================================
+Don't want:
+eflx_lh_tot
+eflx_lwrad_out
+eflx_sh_tot
+eflx_soil_grnd
+qflx_evap_tot
+qflx_evap_grnd
+t_grnd
+t_soil
+
+pfsimulator/parflow_lib/solver_richards.c
+1. Around line 2431: Print CLM output files - in 2 places, both WriteSilo and WritePFBinary
+
