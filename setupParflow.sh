@@ -58,23 +58,23 @@ export PATH=$MPI_PATH/bin:$PATH
 #cd $HYPRE_PATH/src
 #./configure --prefix=$HYPRE_PATH --with-MPI \
 #--with-MPI-include=$MPI_PATH/include --with-MPI-libs=mpi \
-#--with-MPI-lib-dirs=$MPI_PATH/lib > $BASE/hypre.out 2>&1 || exit 1
-#make >> $BASE/hypre.out 2>&1 || exit 1
-#make install >> $BASE/hypre.out 2>&1 || exit 1
+#--with-MPI-lib-dirs=$MPI_PATH/lib > $BASE/installation_logs/hypre.out 2>&1 || exit 1
+#make >> $BASE/installation_logs/hypre.out 2>&1 || exit 1
+#make install >> $BASE/installation_logs/hypre.out 2>&1 || exit 1
 
 # -------------------------------------------
 # INSTALL SILO
 #cd $SILO_PATH
-#./configure --prefix=$SILO_PATH --disable-silex > $BASE/silo.out 2>&1 || exit 1
-#make >> $BASE/silo.out 2>&1 || exit 1
-#make install >> $BASE/silo.out 2>&1 || exit 1
+#./configure --prefix=$SILO_PATH --disable-silex > $BASE/installation_logs/silo.out 2>&1 || exit 1
+#make >> $BASE/installation_logs/silo.out 2>&1 || exit 1
+#make install >> $BASE/installation_logs/silo.out 2>&1 || exit 1
 
 # -------------------------------------------
 # INSTALL TCL
 #cd $BASE/tcl8.6.5/unix
-#./configure --prefix=$TCL_PATH --enable-shared > $BASE/tcl.out 2>&1 || exit 1
-#make >> $BASE/tcl.out 2>&1 || exit 1
-#make install >> $BASE/tcl.out 2>&1 || exit 1
+#./configure --prefix=$TCL_PATH --enable-shared > $BASE/installation_logs/tcl.out 2>&1 || exit 1
+#make >> $BASE/installation_logs/tcl.out 2>&1 || exit 1
+#make install >> $BASE/installation_logs/tcl.out 2>&1 || exit 1
 
 # -------------------------------------------
 # EXPORT LIBRARIES
@@ -94,9 +94,9 @@ cd $PARFLOW_DIR/pfsimulator
 --with-clm \
 --with-hypre=$HYPRE_PATH \
 --with-amps-sequential-io \
---with-silo=$SILO_PATH > $BASE/pfsimulator.out 2>&1 || exit 1
-make >> $BASE/pfsimulator.out 2>&1 || exit 1
-make install >> $BASE/pfsimulator.out 2>&1 || exit 1
+--with-silo=$SILO_PATH > $BASE/installation_logs/pfsimulator.out 2>&1 || exit 1
+make >> $BASE/installation_logs/pfsimulator.out 2>&1 || exit 1
+make install >> $BASE/installation_logs/pfsimulator.out 2>&1 || exit 1
 
 # -------------------------------------------
 # INSTALL PARFLOW TOOLS
@@ -106,15 +106,15 @@ cd $PARFLOW_DIR/pftools
 --with-amps=mpi1 \
 --with-amps-sequential-io \
 --with-silo=$SILO_PATH \
---with-tcl=$TCL_PATH > $BASE/pftools.out 2>&1 || exit 1
-make >> $BASE/pftools.out 2>&1 || exit 1
-make install >> $BASE/pftools.out 2>&1 || exit 1
+--with-tcl=$TCL_PATH > $BASE/installation_logs/pftools.out 2>&1 || exit 1
+make >> $BASE/installation_logs/pftools.out 2>&1 || exit 1
+make install >> $BASE/installation_logs/pftools.out 2>&1 || exit 1
 
 # -------------------------------------------
 # TEST PARFLOW
 cd $PARFLOW_DIR/test
 #make veryclean
-make check > $BASE/pfcheck.out 2>&1
+make check > $BASE/installation_logs/pfcheck.out 2>&1
 
 # -------------------------------------------
 # EXIT
