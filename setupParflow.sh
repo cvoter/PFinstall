@@ -49,7 +49,7 @@ export PATH=$MPI_PATH/bin:$PATH
 
 # -------------------------------------------
 # UNTAR ALL DIRS
-#cd $BASE
+cd $BASE
 #tar xzf silo-4.9.1-bsd.tar.gz
 #tar xfz hypre-2.9.0b.tar.gz
 #tar xfz tcl8.6.5-src.tar.gz
