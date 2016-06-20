@@ -93,8 +93,7 @@ cd $PARFLOW_DIR/pfsimulator
 --with-mpi-lib-dirs=$MPI_PATH/lib \
 --with-clm \
 --with-hypre=$HYPRE_PATH \
---with-amps-sequential-io \
---with-silo=$SILO_PATH > $BASE/installation_logs/pfsimulator.out 2>&1 || exit 1
+--with-amps-sequential-io > $BASE/installation_logs/pfsimulator.out 2>&1 || exit 1
 make >> $BASE/installation_logs/pfsimulator.out 2>&1 || exit 1
 make install >> $BASE/installation_logs/pfsimulator.out 2>&1 || exit 1
 
@@ -105,7 +104,6 @@ cd $PARFLOW_DIR/pftools
 ./configure --prefix=$PARFLOW_DIR \
 --with-amps=mpi1 \
 --with-amps-sequential-io \
---with-silo=$SILO_PATH \
 --with-tcl=$TCL_PATH > $BASE/installation_logs/pftools.out 2>&1 || exit 1
 make >> $BASE/installation_logs/pftools.out 2>&1 || exit 1
 make install >> $BASE/installation_logs/pftools.out 2>&1 || exit 1
