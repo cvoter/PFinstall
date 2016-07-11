@@ -42,17 +42,18 @@ export PARFLOW_DIR=$BASE/parflow
 export SILO_PATH=$BASE/silo-4.9.1-bsd
 export HYPRE_PATH=$BASE/hypre-2.9.0b
 export TCL_PATH=$BASE/tcl-8.6.5
-export HDF5_PATH=$BASE/hdf5-1.8.14/hdf5
+export HDF5_PATH=$BASE/hdf5-1.8.17/hdf5
 export MPI_PATH=/mnt/gluster/chtc/mpich-3.1
 export LD_LIBRARY_PATH=$MPI_PATH/lib:$LD_LIBRARY_PATH
 export PATH=$MPI_PATH/bin:$PATH
 
 # -------------------------------------------
 # UNTAR ALL DIRS
-#cd $BASE
+cd $BASE
 #tar xzf silo-4.9.1-bsd.tar.gz
 #tar xfz hypre-2.9.0b.tar.gz
 #tar xfz tcl8.6.5-src.tar.gz
+tar xzf hdf5-1.8.17.tar.gz
 
 # -------------------------------------------
 # INSTALL HYPRE
@@ -64,9 +65,17 @@ export PATH=$MPI_PATH/bin:$PATH
 #make install >> $BASE/installation_logs/hypre.out 2>&1 || exit 1
 
 # -------------------------------------------
+# INSTALL HDF5
+cd hdf5-1.8.17
+./configure --prefix=$BASE/hdf5-1.8.17 --enable-fortran --enable-cxx \
+--enable-static-exec  --enable-using-memchecker --with-gnu-ld >> $BASE/installation_logs/hdf5.out 2>&1 || exit 1
+make >> $BASE/installation_logs/hdf5.out 2>&1 || exit 1
+make install >> $BASE/installation_logs/hdf5.out 2>&1 || exit 1
+
+# -------------------------------------------
 # INSTALL SILO
 cd $SILO_PATH
-./configure --prefix=$SILO_PATH --disable-silex /
+./configure --prefix=$SILO_PATH --disable-silex \
 --with-hdf5=$HDF5_PATH/include,$HDF5_PATH/lib > $BASE/installation_logs/siloHDF5.out 2>&1 || exit 1
 make >> $BASE/installation_logs/siloHDF5.out 2>&1 || exit 1
 make install >> $BASE/installation_logs/siloHDF5.out 2>&1 || exit 1
