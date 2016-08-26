@@ -53,7 +53,7 @@ cd $BASE
 #tar xzf silo-4.9.1-bsd.tar.gz
 #tar xfz hypre-2.9.0b.tar.gz
 #tar xfz tcl8.6.5-src.tar.gz
-tar xzf hdf5-1.8.17.tar.gz
+#tar xzf hdf5-1.8.17.tar.gz
 
 # -------------------------------------------
 # INSTALL HYPRE
@@ -66,19 +66,19 @@ tar xzf hdf5-1.8.17.tar.gz
 
 # -------------------------------------------
 # INSTALL HDF5
-cd hdf5-1.8.17
-./configure --prefix=$BASE/hdf5-1.8.17 --enable-fortran --enable-cxx \
---enable-static-exec  --enable-using-memchecker --with-gnu-ld >> $BASE/installation_logs/hdf5.out 2>&1 || exit 1
-make >> $BASE/installation_logs/hdf5.out 2>&1 || exit 1
-make install >> $BASE/installation_logs/hdf5.out 2>&1 || exit 1
+#cd hdf5-1.8.17
+#./configure --prefix=$BASE/hdf5-1.8.17 --enable-fortran --enable-cxx \
+#--enable-static-exec  --enable-using-memchecker --with-gnu-ld >> $BASE/installation_logs/hdf5.out 2>&1 || exit 1
+#make >> $BASE/installation_logs/hdf5.out 2>&1 || exit 1
+#make install >> $BASE/installation_logs/hdf5.out 2>&1 || exit 1
 
 # -------------------------------------------
 # INSTALL SILO
-cd $SILO_PATH
-./configure --prefix=$SILO_PATH --disable-silex \
---with-hdf5=$HDF5_PATH/include,$HDF5_PATH/lib > $BASE/installation_logs/siloHDF5.out 2>&1 || exit 1
-make >> $BASE/installation_logs/siloHDF5.out 2>&1 || exit 1
-make install >> $BASE/installation_logs/siloHDF5.out 2>&1 || exit 1
+#cd $SILO_PATH
+#./configure --prefix=$SILO_PATH --disable-silex \
+#--with-hdf5=$HDF5_PATH/include,$HDF5_PATH/lib > $BASE/installation_logs/siloHDF5.out 2>&1 || exit 1
+#make >> $BASE/installation_logs/siloHDF5.out 2>&1 || exit 1
+#make install >> $BASE/installation_logs/siloHDF5.out 2>&1 || exit 1
 
 # -------------------------------------------
 # INSTALL TCL
@@ -90,6 +90,7 @@ make install >> $BASE/installation_logs/siloHDF5.out 2>&1 || exit 1
 # -------------------------------------------
 # EXPORT LIBRARIES
 export LD_LIBRARY_PATH=$TCL_PATH/lib:$LD_LIBRARY_PATH
+export LD_LIBRARY_PATH=$HDF5_PATH/lib:$LD_LIBRARY_PATH
 #export LD_LIBRARY_PATH=$SILO_PATH/lib:$LD_LIBRARY_PATH
 
 # -------------------------------------------
@@ -112,16 +113,16 @@ make install >> $BASE/installation_logs/pfsimulator.out 2>&1 || exit 1
 
 # -------------------------------------------
 # INSTALL PARFLOW TOOLS
-cd $PARFLOW_DIR/pftools
-make veryclean
-./configure --prefix=$PARFLOW_DIR \
---with-amps=mpi1 \
---with-amps-sequential-io \
---with-silo=$SILO_PATH \
---with-hdf5=$HDF5_PATH \
---with-tcl=$TCL_PATH > $BASE/installation_logs/pftools.out 2>&1 || exit 1
-make >> $BASE/installation_logs/pftools.out 2>&1 || exit 1
-make install >> $BASE/installation_logs/pftools.out 2>&1 || exit 1
+#cd $PARFLOW_DIR/pftools
+#make veryclean
+#./configure --prefix=$PARFLOW_DIR \
+#--with-amps=mpi1 \
+#--with-amps-sequential-io \
+#--with-silo=$SILO_PATH \
+#--with-hdf5=$HDF5_PATH \
+#--with-tcl=$TCL_PATH > $BASE/installation_logs/pftools.out 2>&1 || exit 1
+#make >> $BASE/installation_logs/pftools.out 2>&1 || exit 1
+#make install >> $BASE/installation_logs/pftools.out 2>&1 || exit 1
 
 # -------------------------------------------
 # TEST PARFLOW
