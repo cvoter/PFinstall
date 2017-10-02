@@ -11,6 +11,6 @@ log = setupParflow.log
 request_cpus = 1
 request_memory = 4GB
 request_disk = 1GB
-requirements = ( HasGluster == true )
+requirements = ( HasGluster == true ) && (OpSysMajorVer == 7)
 
 queue
