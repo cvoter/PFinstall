@@ -22,10 +22,11 @@
 # PARFLOW
 #   Hosted on github: https://github.com/parflow/parflow
 #   git clone -b master --single-branch https://github.com/parflow/parflow.git
-#   ISSUE (on Windows, assume same is true here): parflow/acmacros/config.guess is too old. 
+#   ISSUE (on Windows, same seems to be true here): parflow/acmacros/config.guess is too old. 
 #   FIX: Copy config.guess from cygwin/usr/share/automake*
 #		"cp usr/share/automake-1.12/config.guess home/Carolyn/ParFlow/parflow/acmacros/config.guess"
-
+#   ISSUE: new option about netCDF configureation, gets confused unless you specify. 
+#   FIX: add option to pfsimulator build: "--with-netcdf4=no"
 
 # -------------------------------------------
 # SET ENVIRONMENT VARIABLES
