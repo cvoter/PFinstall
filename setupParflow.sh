@@ -13,7 +13,6 @@
 #  2016.01 - hypre 2.10 is not compatible with parflow, use hypre 2.9b
 #  2016.02 - silo 4.19.2 confirmed by developers as compatible.
 #  2017.06 - parflow hosted on github (https://github.com/parflow/parflow.git)
-#  2017.06 - parflow/acmacros/config.guess is too old. Fix: cp cygwin/usr/share/automake-1.12/config.guess parflow/acmacros/config.guess
 
 # ==============================================================================
 # INTERPRET ARGUMENTS
