@@ -56,13 +56,17 @@ export MPI_PATH=/mnt/gluster/chtc/mpich-3.1
 export MPI_TAR='openmpi-3.0.0.tar.gz'
 export MPI_URL='https://www.open-mpi.org/software/ompi/v3.0/downloads/openmpi-3.0.0.tar.gz'
 
+if [[ ! -d $BASE/installation_logs ]]; then
+  mkdir $BASE/installation_logs
+fi
+
 # ==============================================================================
 # DEFINE FUNCTIONS
 # ==============================================================================
 # ------------------------------------------------------------------------------
 # DOWNLOAD AND UNTAR DEPENDENCY
 # ------------------------------------------------------------------------------
-getLibrary (thisURL,thisTAR,thisPATH) {
+getLibrary () {
     cd $BASE
     wget $thisURL
 	tar xfz $thisTAR
@@ -77,7 +81,10 @@ getLibrary (thisURL,thisTAR,thisPATH) {
 # MPI
 # ------------------------------------------------------------------------------
 if [[ $MPI_INSTALL -eq 1 ]]; then
-    getLibrary($MPI_URL,$MPI_TAR,$MPI_PATH)
+    thisURL=$MPI_URL
+    thisTAR=$MPI_TAR
+    thisPATH=$MPI_PATH
+    getLibrary
     cd src
     ./configure --prefix=$HYPRE_PATH --with-MPI \
     --with-MPI-include=$MPI_PATH/include --with-MPI-libs=mpi \
@@ -92,7 +99,10 @@ export PATH=$MPI_PATH/bin:$PATH
 # HYPRE
 # ------------------------------------------------------------------------------
 if [[ $HYPRE_INSTALL -eq 1 ]]; then
-    getLibrary($HYPRE_URL,$HYPRE_TAR,$HYPRE_PATH)
+    thisURL=$HYPRE_URL
+    thisTAR=$HYPRE_TAR
+    thisPATH=$HYPRE_PATH
+    getLibrary
     cd src
     ./configure --prefix=$HYPRE_PATH --with-MPI \
     --with-MPI-include=$MPI_PATH/include --with-MPI-libs=mpi \
@@ -105,11 +115,15 @@ fi
 # TCL
 # ------------------------------------------------------------------------------
 if [[ $TCL_INSTALL -eq 1 ]]; then
-    getLibrary($TCL_URL,$TCL_TAR,$TCL_UNTAR)
+    thisURL=$TCL_URL
+    thisTAR=$TCL_TAR
+    thisPATH=$TCL_UNTAR
+    getLibrary
     cd unix
     ./configure --prefix=$TCL_PATH --enable-shared > $BASE/installation_logs/tcl.out 2>&1 || exit 1
     make >> $BASE/installation_logs/tcl.out 2>&1 || exit 1
     make install >> $BASE/installation_logs/tcl.out 2>&1 || exit 1
+    rm -rf $TCL_UNTAR
 fi
 export LD_LIBRARY_PATH=$TCL_PATH/lib:$LD_LIBRARY_PATH
 
