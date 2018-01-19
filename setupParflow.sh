@@ -1,108 +1,165 @@
 #!/bin/bash
-# Carolyn Voter 2017.10
+# Carolyn Voter
+# setupParflow.sh
+# setup and test parflow and associated libraries
 
-# Setup Parflow and associated libraries
+# Usage: setupParflow.sh <MPI_INSTALL> <HYPRE_INSTALL> <TCL_INSTALL> <PFSIMULATOR_INSTALL> <PFTOOLS_INSTALL> <PARFLOW_TEST>
+# Examples:
+#  Install everything: setupParflow.sh 1 1 1 1 1 1
+#  Install parflow only: setupParflow.sh 0 0 0 1 1 1
+#  Test parflow only: setupParflow.sh 0 0 0 0 0 1
 
-# Make sure have *.tar files for hypre, tcl, and the github parflow folder
-# Install to Gluster so don't need to install on local machines
+# Additional Notes:
+#  2016.01 - hypre 2.10 is not compatible with parflow, use hypre 2.9b
+#  2016.02 - silo 4.19.2 confirmed by developers as compatible.
+#  2017.06 - parflow hosted on github (https://github.com/parflow/parflow.git)
+#  2017.06 - parflow/acmacros/config.guess is too old. Fix: cp cygwin/usr/share/automake-1.12/config.guess parflow/acmacros/config.guess
 
-# Current 02/08/2016, can obtain:
-#   silo from here: https://wci.llnl.gov/simulation/computer-codes/silo/downloads
-#   NOTE: silo 4.10.2 confirmed by developers as compatible
+# ==============================================================================
+# INTERPRET ARGUMENTS
+# 1 = Install MPI? 1 = yes, 0 = no
+# 2 = Install Hypre? 1 = yes, 0 = no
+# 3 = Install TCL? 1 = yes, 0 = no
+# 4 = Install pfsimulator? 1 = yes, 0 = no
+# 5 = Install pftools? 1 = yes, 0 = no
+# 6 = Test Parflow? 1 = yes, 0 = no
+# ==============================================================================
+MPI_INSTALL=$1
+HYPRE_INSTALL=$2
+TCL_INSTALL=$3
+PFSIMULATOR_INSTALL=$4
+PFTOOLS_INSTALL=$5
+PARFLOW_TEST=$6
 
-
-# HYPRE
-#   Obtain hypre from here: http://computation.llnl.gov/project/linear_solvers/software.php
-#   NOTE: as of Jan 2016, hypre 2.10 is not compatible with parflow, use hypre 2.9b.
-#   Cannot find any documentation about hypre 2.11
-
-# TCL
-#   Obtain tcl from here: https://www.tcl.tk/software/tcltk/download.html
-
-# PARFLOW
-#   Hosted on github: https://github.com/parflow/parflow
-#   git clone -b master --single-branch https://github.com/parflow/parflow.git
-#   ISSUE (on Windows, same seems to be true here): parflow/acmacros/config.guess is too old. 
-#   FIX: Copy config.guess from cygwin/usr/share/automake*
-#		"cp usr/share/automake-1.12/config.guess home/Carolyn/ParFlow/parflow/acmacros/config.guess"
-#   ISSUE: new option about netCDF configureation, gets confused unless you specify. 
-#   FIX: add option to pfsimulator build: "--with-netcdf4=no"
-
-# -------------------------------------------
+# ==============================================================================
 # SET ENVIRONMENT VARIABLES
+# ==============================================================================
 export CC=gcc
 export CXX=g++
 export FC=gfortran
 export F77=gfortran
+
 export HOME=/mnt/gluster/cvoter/ParFlow
 export BASE=/mnt/gluster/cvoter/ParFlow
 export PARFLOW_DIR=$BASE/parflow
+
 export HYPRE_PATH=$BASE/hypre-2.9.0b
-export TCL_PATH=$BASE/tcl-8.6.7
+export HYPRE_TAR='hypre-2.9.0b.tar.gz'
+export HYPRE_URL='https://computation.llnl.gov/projects/hypre-scalable-linear-solvers-multigrid-methods/download/hypre-2.9.0b.tar.gz'
+
+export TCL_PATH=$BASE/tcl-8.6.8
+export TCL_UNTAR=$BASE/tcl8.6.8
+export TCL_TAR='tcl8.6.8-src.tar.gz'
+export TCL_URL='https://prdownloads.sourceforge.net/tcl/tcl8.6.8-src.tar.gz'
+
 export MPI_PATH=/mnt/gluster/chtc/mpich-3.1
+export MPI_TAR='openmpi-3.0.0.tar.gz'
+export MPI_URL='https://www.open-mpi.org/software/ompi/v3.0/downloads/openmpi-3.0.0.tar.gz'
+
+# ==============================================================================
+# DEFINE FUNCTIONS
+# ==============================================================================
+# ------------------------------------------------------------------------------
+# DOWNLOAD AND UNTAR DEPENDENCY
+# ------------------------------------------------------------------------------
+getLibrary (thisURL,thisTAR,thisPATH) {
+    cd $BASE
+    wget $thisURL
+	tar xfz $thisTAR
+	rm $thisTAR
+	cd $thisPATH
+}
+
+# ==============================================================================
+# INSTALL DEPENDENCIES
+# ==============================================================================
+# ------------------------------------------------------------------------------
+# MPI
+# ------------------------------------------------------------------------------
+if [[ $MPI_INSTALL -eq 1 ]]; then
+    getLibrary($MPI_URL,$MPI_TAR,$MPI_PATH)
+    cd src
+    ./configure --prefix=$HYPRE_PATH --with-MPI \
+    --with-MPI-include=$MPI_PATH/include --with-MPI-libs=mpi \
+    --with-MPI-lib-dirs=$MPI_PATH/lib > $BASE/installation_logs/hypre.out 2>&1 || exit 1
+    make >> $BASE/installation_logs/mpi.out 2>&1 || exit 1
+    make install >> $BASE/installation_logs/mpi.out 2>&1 || exit 1
+fi
 export LD_LIBRARY_PATH=$MPI_PATH/lib:$LD_LIBRARY_PATH
 export PATH=$MPI_PATH/bin:$PATH
 
-# -------------------------------------------
-# UNTAR ALL DIRS
-cd $BASE
-#tar xfz hypre-2.9.0b.tar.gz
-#tar xfz tcl8.6.7-src.tar.gz
+# ------------------------------------------------------------------------------
+# HYPRE
+# ------------------------------------------------------------------------------
+if [[ $HYPRE_INSTALL -eq 1 ]]; then
+    getLibrary($HYPRE_URL,$HYPRE_TAR,$HYPRE_PATH)
+    cd src
+    ./configure --prefix=$HYPRE_PATH --with-MPI \
+    --with-MPI-include=$MPI_PATH/include --with-MPI-libs=mpi \
+    --with-MPI-lib-dirs=$MPI_PATH/lib > $BASE/installation_logs/hypre.out 2>&1 || exit 1
+    make >> $BASE/installation_logs/hypre.out 2>&1 || exit 1
+    make install >> $BASE/installation_logs/hypre.out 2>&1 || exit 1
+fi
 
-# -------------------------------------------
-# INSTALL HYPRE
-#cd $HYPRE_PATH/src
-#./configure --prefix=$HYPRE_PATH --with-MPI \
-#--with-MPI-include=$MPI_PATH/include --with-MPI-libs=mpi \
-#--with-MPI-lib-dirs=$MPI_PATH/lib > $BASE/installation_logs/hypre.out 2>&1 || exit 1
-#make >> $BASE/installation_logs/hypre.out 2>&1 || exit 1
-#make install >> $BASE/installation_logs/hypre.out 2>&1 || exit 1
-
-# -------------------------------------------
-# INSTALL TCL
-#cd $BASE/tcl8.6.7/unix
-#./configure --prefix=$TCL_PATH --enable-shared > $BASE/installation_logs/tcl.out 2>&1 || exit 1
-#make >> $BASE/installation_logs/tcl.out 2>&1 || exit 1
-#make install >> $BASE/installation_logs/tcl.out 2>&1 || exit 1
-
-# -------------------------------------------
-# EXPORT LIBRARIES
+# ------------------------------------------------------------------------------
+# TCL
+# ------------------------------------------------------------------------------
+if [[ $TCL_INSTALL -eq 1 ]]; then
+    getLibrary($TCL_URL,$TCL_TAR,$TCL_UNTAR)
+    cd unix
+    ./configure --prefix=$TCL_PATH --enable-shared > $BASE/installation_logs/tcl.out 2>&1 || exit 1
+    make >> $BASE/installation_logs/tcl.out 2>&1 || exit 1
+    make install >> $BASE/installation_logs/tcl.out 2>&1 || exit 1
+fi
 export LD_LIBRARY_PATH=$TCL_PATH/lib:$LD_LIBRARY_PATH
 
-# -------------------------------------------
-# INSTALL PARFLOW SIMULATOR
-cd $PARFLOW_DIR/pfsimulator
-make clean
-./configure --prefix=$PARFLOW_DIR \
---enable-timing \
---with-amps=mpi1 \
---with-mpi-include=$MPI_PATH/include \
---with-mpi-libs=mpich \
---with-mpi-lib-dirs=$MPI_PATH/lib \
---with-clm \
---with-netcdf4=no \
---with-hypre=$HYPRE_PATH \
---with-amps-sequential-io > $BASE/installation_logs/pfsimulator.out 2>&1 || exit 1
-make >> $BASE/installation_logs/pfsimulator.out 2>&1 || exit 1
-make install >> $BASE/installation_logs/pfsimulator.out 2>&1 || exit 1
+# ==============================================================================
+# INSTALL PARFLOW
+# ==============================================================================
+# ------------------------------------------------------------------------------
+# PFSIMULATOR
+# ------------------------------------------------------------------------------
+if [[ $PFSIMULATOR_INSTALL -eq 1 ]]; then
+    cd $PARFLOW_DIR/pfsimulator
+    make clean
+    ./configure --prefix=$PARFLOW_DIR \
+    --enable-timing \
+    --with-amps=mpi1 \
+    --with-mpi-include=$MPI_PATH/include \
+    --with-mpi-libs=mpich \
+    --with-mpi-lib-dirs=$MPI_PATH/lib \
+    --with-clm \
+    --with-netcdf4=no \
+    --with-hypre=$HYPRE_PATH \
+    --with-amps-sequential-io > $BASE/installation_logs/pfsimulator.out 2>&1 || exit 1
+    make >> $BASE/installation_logs/pfsimulator.out 2>&1 || exit 1
+    make install >> $BASE/installation_logs/pfsimulator.out 2>&1 || exit 1
+fi
 
-# -------------------------------------------
-# INSTALL PARFLOW TOOLS
-cd $PARFLOW_DIR/pftools
-make clean
-./configure --prefix=$PARFLOW_DIR \
---with-amps=mpi1 \
---with-amps-sequential-io \
---with-tcl=$TCL_PATH > $BASE/installation_logs/pftools.out 2>&1 || exit 1
-make >> $BASE/installation_logs/pftools.out 2>&1 || exit 1
-make install >> $BASE/installation_logs/pftools.out 2>&1 || exit 1
-
-# -------------------------------------------
+# ------------------------------------------------------------------------------
+# PFTOOLS
+# ------------------------------------------------------------------------------
+if [[ $PFTOOLS_INSTALL -eq 1 ]]; then
+    cd $PARFLOW_DIR/pftools
+    make clean
+    ./configure --prefix=$PARFLOW_DIR \
+    --with-amps=mpi1 \
+    --with-amps-sequential-io \
+    --with-tcl=$TCL_PATH > $BASE/installation_logs/pftools.out 2>&1 || exit 1
+    make >> $BASE/installation_logs/pftools.out 2>&1 || exit 1
+    make install >> $BASE/installation_logs/pftools.out 2>&1 || exit 1
+fi
+	
+# ==============================================================================
 # TEST PARFLOW
-cd $PARFLOW_DIR/test
-make veryclean
-make check > $BASE/installation_logs/pfcheck.out 2>&1
-
-# -------------------------------------------
+# ==============================================================================
+if [[ $PARFLOW_TEST -eq 1 ]]; then
+    cd $PARFLOW_DIR/test
+    make veryclean
+    make check > $BASE/installation_logs/pfcheck.out 2>&1
+fi
+	
+# ==============================================================================
 # EXIT
+# ==============================================================================
 exit 0
