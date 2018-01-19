@@ -1,0 +1,23 @@
+# setupParflow.sub
+# 2016.06 Carolyn Voter
+# Submit script to setup ParFlow on CHTC gluster
+
+# Arguments in the form: 
+# <MPI_INSTALL> <HYPRE_INSTALL> <TCL_INSTALL> <PFSIMULATOR_INSTALL> <PFTOOLS_INSTALL> <PARFLOW_TEST>
+# Examples:
+#  Install everything: 1 1 1 1 1 1
+#  Install parflow only: 0 0 0 1 1 1
+#  Test parflow only: 0 0 0 0 0 1
+arguments = 0 1 1 1 1 1
+universe = vanilla
+executable = /home/cvoter/PFinstall/setupParflow.sh
+output = setupParflow.out
+error = setupParflow.err
+log = setupParflow.log
+
+request_cpus = 1
+request_memory = 4GB
+request_disk = 1GB
+requirements = ( HasGluster == true )
+
+queue
