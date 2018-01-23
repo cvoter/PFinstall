@@ -8,6 +8,10 @@
 #  Install everything: setupParflow.sh 1 1 1 1 1 1
 #  Install parflow only: setupParflow.sh 0 0 0 1 1 1
 #  Test parflow only: setupParflow.sh 0 0 0 0 0 1
+# Requires the following environment variables to be defined in parent script:
+# BASE - parent directory for parflow and all required libraries
+# MPI_PATH - path to MPI libraries
+# MPI_URL, MPI_TAR - required if installing MPI
 
 # Additional Notes:
 #  2016.01 - hypre 2.10 is not compatible with parflow, use hypre 2.9b
@@ -38,8 +42,6 @@ export CXX=g++
 export FC=gfortran
 export F77=gfortran
 
-export HOME=/mnt/gluster/cvoter/ParFlow
-export BASE=/mnt/gluster/cvoter/ParFlow
 export PARFLOW_DIR=$BASE/parflow
 
 export HYPRE_PATH=$BASE/hypre-2.9.0b
@@ -50,10 +52,6 @@ export TCL_PATH=$BASE/tcl-8.6.8
 export TCL_UNTAR=$BASE/tcl8.6.8
 export TCL_TAR='tcl8.6.8-src.tar.gz'
 export TCL_URL='https://prdownloads.sourceforge.net/tcl/tcl8.6.8-src.tar.gz'
-
-export MPI_PATH=/mnt/gluster/chtc/mpich-3.1
-export MPI_TAR='openmpi-3.0.0.tar.gz'
-export MPI_URL='https://www.open-mpi.org/software/ompi/v3.0/downloads/openmpi-3.0.0.tar.gz'
 
 if [[ ! -d $BASE/installation_logs ]]; then
   mkdir $BASE/installation_logs
@@ -92,7 +90,6 @@ if [[ $MPI_INSTALL -eq 1 ]]; then
     make install >> $BASE/installation_logs/mpi.out 2>&1 || exit 1
 fi
 export LD_LIBRARY_PATH=$MPI_PATH/lib:$LD_LIBRARY_PATH
-export PATH=$MPI_PATH/bin:$PATH
 
 # ------------------------------------------------------------------------------
 # HYPRE
