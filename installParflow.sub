@@ -10,8 +10,8 @@
 #  Test parflow only: 0 0 0 0 0 1
 arguments = 0 1 1 1 1 1
 universe = vanilla
-executable = /home/cvoter/PFinstall/HTCsetupParflow.sh
-transfer_input_files = /home/cvoter/PFinstall/setupParflow.sh
+executable = /home/cvoter/PFinstall/HTCinstallParflow.sh
+transfer_input_files = /home/cvoter/PFinstall/installParflow.sh
 output = setupParflow.out
 error = setupParflow.err
 log = setupParflow.log
