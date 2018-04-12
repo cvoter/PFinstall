@@ -12,7 +12,7 @@
 # ==============================================================================
 # SLURM REQUESTS
 # ==============================================================================
-#SBATCH --partition=pre
+#SBATCH --partition=loheide3
 #SBATCH --time=24:00:00
 #SBATCH --ntasks=1
 #SBATCH --nodes=1
@@ -46,4 +46,4 @@ export MPI_PATH=/usr/mpi/gcc/mpich-3.1
 # ==============================================================================
 # CALL INSTALL SCRIPT
 # ==============================================================================
-sh setupParflow.sh $MPI_INSTALL $HYPRE_INSTALL $TCL_INSTALL $PFSIMULATOR_INSTALL $PFTOOLS_INSTALL $PARFLOW_TEST
+sh installParflow.sh $MPI_INSTALL $HYPRE_INSTALL $TCL_INSTALL $PFSIMULATOR_INSTALL $PFTOOLS_INSTALL $PARFLOW_TEST
