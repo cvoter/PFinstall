@@ -1,13 +1,13 @@
 #!/bin/bash
 # Carolyn Voter
-# setupParflow.sh
+# installParflow.sh
 # setup and test parflow and associated libraries
 
-# Usage: setupParflow.sh <MPI_INSTALL> <HYPRE_INSTALL> <TCL_INSTALL> <PFSIMULATOR_INSTALL> <PFTOOLS_INSTALL> <PARFLOW_TEST>
+# Usage: sh installParflow.sh <MPI_INSTALL> <HYPRE_INSTALL> <TCL_INSTALL> <PFSIMULATOR_INSTALL> <PFTOOLS_INSTALL> <PARFLOW_TEST>
 # Examples:
-#  Install everything: setupParflow.sh 1 1 1 1 1 1
-#  Install parflow only: setupParflow.sh 0 0 0 1 1 1
-#  Test parflow only: setupParflow.sh 0 0 0 0 0 1
+#  Install everything: sh installParflow.sh 1 1 1 1 1 1
+#  Install parflow only: sh installParflow.sh 0 0 0 1 1 1
+#  Test parflow only: sh installParflow.sh 0 0 0 0 0 1
 # Requires the following environment variables to be defined in parent script:
 # BASE - parent directory for parflow and all required libraries
 # MPI_PATH - path to MPI libraries
