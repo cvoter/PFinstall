@@ -34,6 +34,9 @@ pfsimulator/clm/open_files.F90
      open(2010,file=clm_output_dir//'can_out/can_out.'//cistep//'.bin.'//trim(adjustl(RI)), access=ACCESS, form=FORM) ! @ 2D output file
      write(2010) ix,iy,iz,drv%nc,drv%nr,nz
 
+pfsimulator/clm/close_files.F90
+1. Add close(2010) to end of list.
+
 pfsimulator/parflow_lib/parflow_proto_f.h
 1. Around line 130: correct sequence for CLM_LSM(pressure....clm_daily_rst)
 add "can_out_data" wherever see "swe_out_data" (should be 3x)
