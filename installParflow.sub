@@ -1,4 +1,4 @@
-# setupParflow.sub
+# installParflow.sub
 # 2016.06 Carolyn Voter
 # Submit script to setup ParFlow on CHTC gluster
 
@@ -8,13 +8,13 @@
 #  Install everything: 1 1 1 1 1 1
 #  Install parflow only: 0 0 0 1 1 1
 #  Test parflow only: 0 0 0 0 0 1
-arguments = 0 1 1 1 1 1
+arguments = 0 0 0 0 0 1
 universe = vanilla
 executable = /home/cvoter/PFinstall/HTCinstallParflow.sh
 transfer_input_files = /home/cvoter/PFinstall/installParflow.sh
-output = setupParflow.out
-error = setupParflow.err
-log = setupParflow.log
+output = installParflow.out
+error = installParflow.err
+log = installParflow.log
 
 request_cpus = 1
 request_memory = 4GB

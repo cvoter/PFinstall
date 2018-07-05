@@ -45,4 +45,4 @@ export PATH=$MPI_PATH/bin:$PATH
 # ==============================================================================
 # CALL INSTALL SCRIPT
 # ==============================================================================
-sh setupParflow.sh $MPI_INSTALL $HYPRE_INSTALL $TCL_INSTALL $PFSIMULATOR_INSTALL $PFTOOLS_INSTALL $PARFLOW_TEST
+sh installParflow.sh $MPI_INSTALL $HYPRE_INSTALL $TCL_INSTALL $PFSIMULATOR_INSTALL $PFTOOLS_INSTALL $PARFLOW_TEST
