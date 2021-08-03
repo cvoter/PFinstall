@@ -3,11 +3,11 @@
 # installParflow.sh
 # setup and test parflow and associated libraries
 
-# Usage: sh installParflow.sh <MPI_INSTALL> <HYPRE_INSTALL> <TCL_INSTALL> <PFSIMULATOR_INSTALL> <PFTOOLS_INSTALL> <PARFLOW_TEST>
+# Usage: sh installParflow.sh <MPI_INSTALL> <HYPRE_INSTALL> <TCL_INSTALL> <PARFLOW_INSTALL> <PARFLOW_TEST>
 # Examples:
-#  Install everything: sh installParflow.sh 1 1 1 1 1 1
-#  Install parflow only: sh installParflow.sh 0 0 0 1 1 1
-#  Test parflow only: sh installParflow.sh 0 0 0 0 0 1
+#  Install everything: sh installParflow.sh 1 1 1 1 1
+#  Install parflow only: sh installParflow.sh 0 0 0 1 1
+#  Test parflow only: sh installParflow.sh 0 0 0 0 1
 # Requires the following environment variables to be defined in parent script:
 # BASE - parent directory for parflow and all required libraries
 # MPI_PATH - path to MPI libraries
@@ -17,22 +17,21 @@
 #  2016.01 - hypre 2.10 is not compatible with parflow, use hypre 2.9b
 #  2016.02 - silo 4.19.2 confirmed by developers as compatible.
 #  2017.06 - parflow hosted on github (https://github.com/parflow/parflow.git)
+#  2021.08 - parflow now built with CMAKE, no separate pfsimulator and pftools
 
 # ==============================================================================
 # INTERPRET ARGUMENTS
 # 1 = Install MPI? 1 = yes, 0 = no
 # 2 = Install Hypre? 1 = yes, 0 = no
 # 3 = Install TCL? 1 = yes, 0 = no
-# 4 = Install pfsimulator? 1 = yes, 0 = no
-# 5 = Install pftools? 1 = yes, 0 = no
-# 6 = Test Parflow? 1 = yes, 0 = no
+# 4 = Install Parflow? 1 = yes, 0 = no
+# 5 = Test Parflow? 1 = yes, 0 = no
 # ==============================================================================
 MPI_INSTALL=$1
 HYPRE_INSTALL=$2
 TCL_INSTALL=$3
-PFSIMULATOR_INSTALL=$4
-PFTOOLS_INSTALL=$5
-PARFLOW_TEST=$6
+PARFLOW_INSTALL=$4
+PARFLOW_TEST=$5
 
 # ==============================================================================
 # SET ENVIRONMENT VARIABLES
@@ -126,40 +125,22 @@ export LD_LIBRARY_PATH=$TCL_PATH/lib:$LD_LIBRARY_PATH
 # ==============================================================================
 # INSTALL PARFLOW
 # ==============================================================================
-# ------------------------------------------------------------------------------
-# PFSIMULATOR
-# ------------------------------------------------------------------------------
-if [[ $PFSIMULATOR_INSTALL -eq 1 ]]; then
-    cd $PARFLOW_DIR/pfsimulator
-    make clean
-    ./configure --prefix=$PARFLOW_DIR \
-    --enable-timing \
-    --with-amps=mpi1 \
-    --with-mpi-include=$MPI_PATH/include \
-    --with-mpi-libs=mpich \
-    --with-mpi-lib-dirs=$MPI_PATH/lib \
-    --with-clm \
-    --with-netcdf4=no \
-    --with-hypre=$HYPRE_PATH \
-    --with-amps-sequential-io > $BASE/installation_logs/pfsimulator.out 2>&1 || exit 1
-    make >> $BASE/installation_logs/pfsimulator.out 2>&1 || exit 1
-    make install >> $BASE/installation_logs/pfsimulator.out 2>&1 || exit 1
+if [[ $PARFLOW_INSTALL -eq 1 ]]; then
+  cd $BASE
+  mkdir build
+  cd build
+  ccmake ../parflow \
+    -DPARFLOW_AMPS_LAYER=mpi1 \
+    -DPARFLOW_AMPS_SEQUENTIAL_IO=TRUE \
+    -DPARFLOW_ENABLE_TIMING=TRUE \
+    -DPARFLOW_HAVE_CLM=ON \
+    -DTCL_TCLSH=${TCL_PATH} \
+    -DHYPRE_ROOT=${HYPRE_PATH} \
+    -DCMAKE_INSTALL_PREFIX=${PARFLOW_DIR}
+  make >> $BASE/installation_logs/parflow.out 2>&1 || exit 1
+  make install >> $BASE/installation_logs/parflow.out 2>&1 || exit 1
 fi
 
-# ------------------------------------------------------------------------------
-# PFTOOLS
-# ------------------------------------------------------------------------------
-if [[ $PFTOOLS_INSTALL -eq 1 ]]; then
-    cd $PARFLOW_DIR/pftools
-    make clean
-    ./configure --prefix=$PARFLOW_DIR \
-    --with-amps=mpi1 \
-    --with-amps-sequential-io \
-    --with-tcl=$TCL_PATH > $BASE/installation_logs/pftools.out 2>&1 || exit 1
-    make >> $BASE/installation_logs/pftools.out 2>&1 || exit 1
-    make install >> $BASE/installation_logs/pftools.out 2>&1 || exit 1
-fi
-	
 # ==============================================================================
 # TEST PARFLOW
 # ==============================================================================
